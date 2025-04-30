@@ -37,11 +37,7 @@ function App() {
           console.error(err);
           //it will error cuz there is no proper backend yet
           //load from json file
-          if (localStorage.getItem('products')) {
-            setProducts(JSON.parse(localStorage.getItem('products')));
-          } else {
-            setProducts(backupData.products);
-          }
+          setProducts(backupData.products);
         });
 
       // Fetch comments on page load
@@ -60,11 +56,7 @@ function App() {
           console.error(err);
           //it will error cuz there is no proper backend yet
           //load from json file
-          if (localStorage.getItem('comments')) {
-            setComments(JSON.parse(localStorage.getItem('comments')));
-          } else {
-            setComments(backupData.comments);
-          }
+          setComments(backupData.comments);
         });
     }
     onInitialFetch();

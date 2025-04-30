@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import css from './ProductCommentEdit.module.css';
 
 export default function ProductCommentEdit({
   productId,
@@ -21,13 +22,15 @@ export default function ProductCommentEdit({
   };
 
   return (
-    <div>
-      <h3>Add new comment</h3>
-      <form onSubmit={handleSubmit}>
-        <p>Comment:</p>
-        <textarea name="comment" rows="4"></textarea>
-        <button type="submit">Save</button>
-      </form>
+    <div className={css.modal}>
+      <div className={css.modalContent}>
+        <h3>Add new comment</h3>
+        <form onSubmit={handleSubmit} className={css.form}>
+          <p>Comment:</p>
+          <textarea name="comment" rows="4"></textarea>
+          <button type="submit">Save</button>
+        </form>
+      </div>
     </div>
   );
 }

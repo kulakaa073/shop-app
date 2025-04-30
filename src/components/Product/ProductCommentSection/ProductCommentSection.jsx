@@ -1,5 +1,6 @@
 import ProductComment from './ProductComment/ProductComment';
 import ProductCommentEdit from './ProductCommentEdit/ProductCommentEdit';
+import css from './ProductCommentSection.module.css';
 import { useState } from 'react';
 
 export default function ProductCommentSection({
@@ -15,9 +16,9 @@ export default function ProductCommentSection({
   };
 
   return (
-    <div>
+    <div className={css.container}>
       <button onClick={() => toggleCommentAdd()}>Add Comment</button>
-      <ul>
+      <ul className={css.commentList}>
         {comments.map(comment => (
           <li key={comment.id}>
             <ProductComment

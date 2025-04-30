@@ -4,6 +4,7 @@ import ProductList from './components/ProductList/ProductList';
 import Product from './components/Product/Product';
 import ProductEditModal from './components/ProductEditModal/ProductEditModal';
 
+import backupData from './db.json';
 import { fetchData } from './utils';
 //import { postData } from './utils';
 import { useState, useEffect, useRef } from 'react';
@@ -34,6 +35,9 @@ function App() {
         })
         .catch(err => {
           console.error(err);
+          //it will error cuz there is no proper backend yet
+          //load from json file
+          setProducts(backupData.products);
         });
 
       // Fetch comments on page load
@@ -50,10 +54,20 @@ function App() {
         })
         .catch(err => {
           console.error(err);
+          //it will error cuz there is no proper backend yet
+          //load from json file
+          setComments(backupData.comments);
         });
     }
     onInitialFetch();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('products', JSON.stringify(products));
+  }, [products]);
+  useEffect(() => {
+    localStorage.setItem('comments', JSON.stringify(comments));
+  }, [comments]);
 
   // Update products on change
   // Look at it later

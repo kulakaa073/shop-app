@@ -3,6 +3,8 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useId } from 'react';
 
+import css from './ProductEditModal.module.css';
+
 export default function ProductEditModal({
   product,
   onProductAdd,
@@ -71,8 +73,9 @@ export default function ProductEditModal({
   });
 
   return (
-    <div className="modal">
-      <div className="modalContent">
+    <div className={css.modal}>
+      <div className={css.modalContent}>
+        <h2>{submitButtonText}</h2>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
@@ -90,7 +93,7 @@ export default function ProductEditModal({
               <ErrorMessage name="imageUrl" component="span" />
             </div>
             <div>
-              <label htmlFor={countFieldId}>Image URL</label>
+              <label htmlFor={countFieldId}>Count</label>
               <Field id={countFieldId} name="count" />
               <ErrorMessage name="count" component="span" />
             </div>

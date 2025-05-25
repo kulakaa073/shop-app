@@ -1,13 +1,16 @@
 import './App.css';
 
-import ProductList from './components/ProductList/ProductList';
-import Product from './components/Product/Product';
-import ProductEditModal from './components/ProductEditModal/ProductEditModal';
+import ProductEditModal from './components/ProductModal/ProductModal';
 
-import backupData from './db.json';
 import { fetchData } from './utils';
 //import { postData } from './utils';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
+
+import { Provider } from 'react-redux';
+import store from './store/store';
+
+import { BrowserRouter } from 'react-router-dom';
+
 function App() {
   const initialFetch = useRef(false);
   const [products, setProducts] = useState([]);
@@ -136,35 +139,26 @@ function App() {
 
   return (
     <>
-      <h1>Shop product management app</h1>
-      {!isProductViewOpen && (
-        <ProductList
-          products={products}
-          onAddButtonClick={openModal}
-          onProductDelete={deleteProduct}
-          onProductSelect={selectProduct}
-        />
-      )}
-      {isProductViewOpen && (
-        <Product
-          product={selectedProduct}
-          onProductViewClose={closeProductView}
-          onEditButtonClick={openModal}
-          comments={comments.filter(
-            comment => comment.productId === selectedProduct.id
+      <Provider store={store}>
+        <BrowserRouter>
+          <h1>Shop product management app</h1>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<ProductListPage />} />
+              <Route path="/products/:productId" element={<ProductPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+          {isModalOpen && (
+            <ProductEditModal
+              product={selectedProduct}
+              onProductAdd={addProduct}
+              onProductEdit={editProduct}
+              onModalClose={closeModal}
+            />
           )}
-          onCommentAdd={addComment}
-          onCommentDelete={deleteComment}
-        />
-      )}
-      {isModalOpen && (
-        <ProductEditModal
-          product={selectedProduct}
-          onProductAdd={addProduct}
-          onProductEdit={editProduct}
-          onModalClose={closeModal}
-        />
-      )}
+        </BrowserRouter>
+      </Provider>
     </>
   );
 }

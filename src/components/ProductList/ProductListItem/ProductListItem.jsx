@@ -1,28 +1,32 @@
-export default function ProductListItem({
-  product,
+import { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+export const ProductListItem = memo(function ProductListItem({
+  data,
   onProductDelete,
-  onProductSelect,
 }) {
-  const handleDelete = () => {
-    onProductDelete(product.id);
-  };
+  const navigate = useNavigate();
 
   const handleSelect = () => {
-    onProductSelect(product);
+    navigate(`/products/${data.id}`);
+  };
+
+  const handleDelete = () => {
+    onProductDelete(data.id);
   };
 
   return (
     <>
-      <td>{product.name}</td>
-      <td>{product.count}</td>
+      <td>{data.name}</td>
+      <td>{data.count}</td>
       <td>
-        {product.size.width}x{product.size.height}
+        {data.size.width}x{data.size.height}
       </td>
-      <td>{product.weight}</td>
+      <td>{data.weight}</td>
       <td>
         <button onClick={handleSelect}>View</button>
         <button onClick={handleDelete}>Delete</button>
       </td>
     </>
   );
-}
+});

@@ -16,9 +16,13 @@ export default function ProductListPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const sortBy = searchParams.get('_sort');
+  const sortBy = searchParams.get('sort') || '';
+  const isSortAsc = searchParams.get('order') !== 'desc';
 
-  useEffect(() => dispatch(fetchProducts(sortBy)), [dispatch, sortBy]);
+  useEffect(
+    () => dispatch(fetchProducts(sortBy, isSortAsc)),
+    [dispatch, sortBy, isSortAsc]
+  );
 
   const handleOpenDeleteModal = useCallback(
     id => {
@@ -34,13 +38,20 @@ export default function ProductListPage() {
 
   const handleDelete = () => {
     dispatch(deleteProduct(searchParams.get('delete')));
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('delete');
+      return next;
+    });
     setIsDeleteModalOpen(false);
   };
 
   const handleCancel = () => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    nextSearchParams.delete('delete');
-    setSearchParams(nextSearchParams);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('delete');
+      return next;
+    });
     setIsDeleteModalOpen(false);
   };
 

@@ -5,9 +5,10 @@ axios.defaults.baseURL = 'http://localhost:3000/'; // Replace with your API base
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (sortBy, thunkAPI) => {
+  async (sortBy, isSortAsc, thunkAPI) => {
+    const params = { _sort: sortBy, _order: isSortAsc ? 'asc' : 'desc' };
     try {
-      const responce = await axios.get('/products?_sort=sortBy');
+      const responce = await axios.get('/products', params);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -40,10 +41,10 @@ export const addProduct = createAsyncThunk(
 );
 
 export const editProduct = createAsyncThunk(
-  'products/addProduct',
+  'products/editProduct',
   async (product, thunkAPI) => {
     try {
-      const responce = await axios.get('/products', product);
+      const responce = await axios.patch(`/products/${product.id}`, product);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

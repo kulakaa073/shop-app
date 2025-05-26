@@ -1,16 +1,9 @@
-import ProductCommentSection from './ProductCommentSection/ProductCommentSection';
 import css from './Product.module.css';
-export default function Product({
-  product,
-  onProductViewClose,
-  onEditButtonClick,
-  comments,
-  onCommentAdd,
-  onCommentDelete,
-}) {
+import { memo } from 'react';
+
+export const Product = memo(function Product(product) {
   return (
     <div className={css.container}>
-      <button onClick={() => onProductViewClose()}>Return</button>
       <div className={css.product}>
         <h2>{product.name}</h2>
         <img src={product.imageUrl} alt={product.name} />
@@ -25,14 +18,7 @@ export default function Product({
           </li>
           <li>Weight: {product.weight}</li>
         </ul>
-        <button onClick={() => onEditButtonClick()}>Edit</button>
       </div>
-      <ProductCommentSection
-        comments={comments}
-        productId={product.id}
-        onCommentAdd={onCommentAdd}
-        onCommentDelete={onCommentDelete}
-      />
     </div>
   );
-}
+});

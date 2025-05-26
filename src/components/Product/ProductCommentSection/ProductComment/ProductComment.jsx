@@ -1,4 +1,9 @@
-export default function ProductComment({ comment, onCommentDelete }) {
+import { memo } from 'react';
+
+export const ProductComment = memo(function ProductComment({
+  comment,
+  onCommentDelete,
+}) {
   const handleDelete = () => {
     onCommentDelete(comment.id);
   };
@@ -10,4 +15,4 @@ export default function ProductComment({ comment, onCommentDelete }) {
       <button onClick={handleDelete}>Delete</button>
     </div>
   );
-}
+});

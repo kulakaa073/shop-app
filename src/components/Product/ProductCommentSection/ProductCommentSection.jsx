@@ -1,14 +1,9 @@
-import ProductComment from './ProductComment/ProductComment';
+import { ProductComment } from './ProductComment/ProductComment';
 import ProductCommentEdit from './ProductCommentEdit/ProductCommentEdit';
 import css from './ProductCommentSection.module.css';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
-export default function ProductCommentSection({
-  comments,
-  productId,
-  onCommentAdd,
-  onCommentDelete,
-}) {
+export const ProductCommentSection = memo(function ProductCommentSection({}) {
   const [IsCommentAddOpen, setIsCommentAddOpen] = useState(false);
 
   const toggleCommentAdd = () => {
@@ -37,4 +32,4 @@ export default function ProductCommentSection({
       )}
     </div>
   );
-}
+});

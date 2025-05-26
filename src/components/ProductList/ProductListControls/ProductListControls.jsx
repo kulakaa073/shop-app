@@ -1,24 +1,26 @@
 import { memo } from 'react';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
+import { openProductModal } from '../../../redux/productModalSlice';
 
 export const ProductListControls = memo(function ProductListControls() {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const sortBy = searchParams.get('_sort') || '';
+  const sortBy = searchParams.get('sort') || '';
   const isSortAsc = searchParams.get('order') !== 'desc';
 
   const handleAddProduct = () => {
-    setSearchParams(prev => {
-      const next = new URLSearchParams(prev);
-      next.set('modal', 'addProduct');
-      return next;
-    });
+    dispatch(openProductModal({ mode: 'add' }));
   };
 
   const handleSortChange = event => {
     const sorting = event.target.value;
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      sorting ? next.set('_sort', sorting) : next.delete('_sort');
+      // on default sorting remove param to not clutter the link
+      sorting && sorting !== 'default'
+        ? next.set('sort', sorting)
+        : next.delete('sort');
       return next;
     });
   };
@@ -26,7 +28,8 @@ export const ProductListControls = memo(function ProductListControls() {
   const toggleSortDirection = () => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      next.set('order', isSortAsc ? 'desc' : 'asc');
+      // on ascending sort remove param to not clutter since its default
+      isSortAsc ? next.set('order', 'desc') : next.delete('order');
       return next;
     });
   };
@@ -35,7 +38,7 @@ export const ProductListControls = memo(function ProductListControls() {
     <div>
       <button onClick={handleAddProduct}>Add Product</button>
       <select name="sort" value={sortBy} onChange={handleSortChange}>
-        <option value="">Default sorting</option>
+        <option value="default">Default sorting</option>
         <option value="name">Sort by Name</option>
         <option value="count">Sort by Count</option>
         <option value="weight">Sort by Weight</option>

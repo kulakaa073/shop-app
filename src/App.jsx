@@ -145,7 +145,9 @@ function App() {
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route path="/" element={<ProductListPage />} />
-              <Route path="/products/:productId" element={<ProductPage />} />
+              <Route path="/products/:productId" element={<ProductPage />}>
+                <Route path="comments" element={<ProductCommentSection />} />
+              </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

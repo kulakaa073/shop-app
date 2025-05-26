@@ -53,7 +53,15 @@ const slice = createSlice({
       .addCase(editProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.error = null;
-        state.items.push(action.payload);
+        const index = state.items.findIndex(
+          item => item.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items[index] = {
+            ...state.items[index],
+            ...action.payload,
+          };
+        }
       })
       .addCase(editProduct.rejected, handleRejected)
       .addCase(deleteProduct.pending, handlePending)

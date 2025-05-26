@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useId } from 'react';
 
-import css from './ProductEditModal.module.css';
+import css from './ProductModal.module.css';
 
 export default function ProductEditModal({
   product,

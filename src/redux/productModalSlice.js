@@ -5,18 +5,16 @@ const slice = createSlice({
   initialState: {
     isOpen: false,
     productId: null,
-    mode: 'view', // 'view', 'edit', 'add'
+    mode: 'none', // 'none', 'edit', 'add'
   },
   reducers: {
     openProductModal(state, action) {
-      state.isOpen = true;
       state.productId = action.payload.productId || null;
-      state.mode = action.payload.mode || 'view';
+      state.mode = action.payload.mode || 'none';
     },
     closeProductModal(state) {
-      state.isOpen = false;
       state.productId = null;
-      state.mode = 'view';
+      state.mode = 'none';
     },
   },
 });
@@ -24,7 +22,6 @@ const slice = createSlice({
 export const { openProductModal, closeProductModal } = slice.actions;
 export default slice.reducer;
 
-export const selectProductModalIsOpen = state => state.productModal.isOpen;
 export const selectProductModalProductId = state =>
   state.productModal.productId;
 export const selectProductModalMode = state => state.productModal.mode;

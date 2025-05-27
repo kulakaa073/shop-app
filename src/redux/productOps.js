@@ -5,10 +5,12 @@ axios.defaults.baseURL = 'http://localhost:3000/'; // Replace with your API base
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (sortBy, isSortAsc, thunkAPI) => {
-    const params = { _sort: sortBy, _order: isSortAsc ? 'asc' : 'desc' };
+  async ({ sortBy, isSortAsc }, thunkAPI) => {
+    const params = { sort: isSortAsc ? sortBy : '-' + sortBy };
+    //console.log('fetchproucts', params);
+    //console.log(isSortAsc);
     try {
-      const responce = await axios.get('/products', params);
+      const responce = await axios.get(`/products?_sort=${params.sort}`);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -57,49 +59,6 @@ export const deleteProduct = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
       const responce = await axios.get(`/products/${productId}`);
-      return responce.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const fetchComments = createAsyncThunk(
-  'comments/fetchComments',
-  async (selectedProductId, thunkAPI) => {
-    try {
-      const responce = await axios.get(
-        `/comments?productId=${selectedProductId}`
-      );
-      if (!responce.data) {
-        return thunkAPI.rejectWithValue('No comments found');
-      }
-      return responce.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const addComment = createAsyncThunk(
-  'comments/fetchComments',
-  async (comment, thunkAPI) => {
-    try {
-      // Need to update product comments array too
-      const responce = await axios.post('/comments', comment);
-      return responce.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const deleteComment = createAsyncThunk(
-  'comments/fetchComments',
-  async (commentId, thunkAPI) => {
-    try {
-      // Need to update product comments array too
-      const responce = await axios.delete(`/comments/${commentId}`);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

@@ -2,166 +2,69 @@ import './App.css';
 
 import ProductEditModal from './components/ProductModal/ProductModal';
 
-import { fetchData } from './utils';
 //import { postData } from './utils';
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
-import { Provider } from 'react-redux';
-import store from './store/store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+//import { store } from './redux/store';
 
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import { selectProductModalMode } from './redux/productModalSlice';
+import { addProduct, editProduct } from './redux/productOps';
+
+const ProductListPage = lazy(() =>
+  import('./pages/ProductListPage/ProductListPage')
+);
+const ProductPage = lazy(() => import('./pages/ProductPage/ProductPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
+const ProductModal = lazy(() =>
+  import('./components/ProductModal/ProductModal')
+);
+const ProductCommentSection = lazy(() =>
+  import('./components/Product/ProductCommentSection/ProductCommentSection')
+);
+
+// enum
+const ActiveModal = Object.freeze({
+  Add: 'add',
+  Edit: 'edit',
+  None: 'none',
+});
 
 function App() {
-  const initialFetch = useRef(false);
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isProductViewOpen, setIsProductViewOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [comments, setComments] = useState([]);
+  const dispatch = useDispatch();
+  const activeModal = useSelector(selectProductModalMode);
 
-  // Fetch data on page load
-  useEffect(() => {
-    async function onInitialFetch() {
-      if (initialFetch.current) return;
-      initialFetch.current = true;
-
-      await fetchData('products')
-        .then(response => {
-          console.log(response);
-          if (response.data.length === 0) {
-            throw new Error('No products found');
-          }
-          return response.data;
-        })
-        .then(data => {
-          setProducts(data);
-        })
-        .catch(err => {
-          console.error(err);
-          //it will error cuz there is no proper backend yet
-          //load from json file
-          setProducts(backupData.products);
-        });
-
-      // Fetch comments on page load
-      await fetchData('comments')
-        .then(response => {
-          console.log(response);
-          if (response.data.length === 0) {
-            throw new Error('No comments found');
-          }
-          return response.data;
-        })
-        .then(data => {
-          setComments(data);
-        })
-        .catch(err => {
-          console.error(err);
-          //it will error cuz there is no proper backend yet
-          //load from json file
-          setComments(backupData.comments);
-        });
-    }
-    onInitialFetch();
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-  useEffect(() => {
-    localStorage.setItem('comments', JSON.stringify(comments));
-  }, [comments]);
-
-  // Update products on change
-  // Look at it later
-  /*   useEffect(() => {
-    postData('products', products)
-      .then(response => {
-        console.log('Products updated successfully:', response.data);
-      })
-      .catch(err => {
-        console.error('Error updating products:', err);
-      });
-  }, [products]); */
-
-  const selectProduct = product => {
-    setSelectedProduct(product);
-    setIsProductViewOpen(true);
+  const handleAddProduct = product => {
+    dispatch(addProduct(product));
   };
 
-  const closeProductView = () => {
-    setSelectedProduct(null);
-    setIsProductViewOpen(false);
+  const handleEditProduct = (productId, product) => {
+    dispatch(editProduct(productId, product));
   };
 
-  const addProduct = product => {
-    setProducts(prevProducts => {
-      return [...prevProducts, product];
-    });
-  };
-
-  const editProduct = editedProduct => {
-    setProducts(prevProducts => {
-      return prevProducts.map(product =>
-        product.id === editedProduct.id ? editedProduct : product
-      );
-    });
-    if (selectedProduct && selectedProduct.id === editedProduct.id) {
-      setSelectedProduct(editedProduct);
-    }
-  };
-
-  const deleteProduct = productId => {
-    setProducts(prevProducts => {
-      return prevProducts.filter(product => product.id !== productId);
-    });
-  };
-
-  const addComment = comment => {
-    setComments(prevComments => {
-      return [...prevComments, comment];
-    });
-  };
-
-  const deleteComment = commentId => {
-    setComments(prevComments => {
-      return prevComments.filter(comment => comment.id !== commentId);
-    });
-  };
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
+  // move selecting object data to app too?
+  // or move add/edit handlers to modal?
   return (
-    <>
-      <Provider store={store}>
-        <BrowserRouter>
-          <h1>Shop product management app</h1>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<ProductListPage />} />
-              <Route path="/products/:productId" element={<ProductPage />}>
-                <Route path="comments" element={<ProductCommentSection />} />
-              </Route>
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-          {isModalOpen && (
-            <ProductEditModal
-              product={selectedProduct}
-              onProductAdd={addProduct}
-              onProductEdit={editProduct}
-              onModalClose={closeModal}
-            />
-          )}
-        </BrowserRouter>
-      </Provider>
-    </>
+    <BrowserRouter>
+      <h1>Shop product management app</h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<ProductListPage />} />
+          <Route path="/products/:productId" element={<ProductPage />}>
+            <Route path="comments" element={<ProductCommentSection />} />
+          </Route>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+        {activeModal === ActiveModal.Add && (
+          <ProductModal onSubmit={handleAddProduct} />
+        )}
+        {activeModal === ActiveModal.Edit && (
+          <ProductModal onSubmit={handleEditProduct} />
+        )}
+      </Suspense>
+    </BrowserRouter>
   );
 }
 

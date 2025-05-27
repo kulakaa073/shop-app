@@ -1,17 +1,28 @@
-import { nanoid } from 'nanoid';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useId } from 'react';
 
 import css from './ProductModal.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectProductById } from '../../redux/productsSlice';
 
-export default function ProductEditModal({
-  product,
-  onProductAdd,
-  onProductEdit,
-  onModalClose,
-}) {
-  const submitButtonText = product ? 'Edit product' : 'Add product';
+import {
+  selectProductModalProductId,
+  closeProductModal,
+  selectProductModalMode,
+} from '../../redux/productModalSlice';
+
+export default function ProductEditModal({ onSubmit }) {
+  const dispatch = useDispatch();
+  const productId = useSelector(selectProductModalProductId) || null;
+
+  // what would selector return if productId is null?
+  const product = useSelector(selectProductById(productId));
+
+  // just small thing to make modal more user friendly
+  const submitButtonText = (
+    useSelector(selectProductModalMode) + ' product'
+  ).toLocaleUpperCase();
 
   const nameFieldId = useId();
   const imageUrlFieldId = useId();
@@ -21,30 +32,38 @@ export default function ProductEditModal({
   const weightFieldId = useId();
 
   const initialValues = {
-    name: product ? product.name : '',
-    imageUrl: product ? product.imageUrl : '',
-    count: product ? product.count : 0,
-    width: product ? product.size.width : 0,
-    height: product ? product.size.height : 0,
-    weight: product ? product.weight : 0,
+    name: product.name || '',
+    imageUrl: product.imageUrl || '',
+    count: product.count || 0,
+    width: product.size.width || 0,
+    height: product.size.height || 0,
+    weight: product.weight || 0,
   };
 
   const handleSubmit = (values, actions) => {
-    const newProduct = {
-      id: product ? product.id : nanoid(),
-      name: values.name,
-      imageUrl: values.imageUrl,
-      count: Number(values.count),
-      size: { width: Number(values.width), height: Number(values.height) },
-      weight: values.weight,
-    };
-    if (product) {
-      onProductEdit(newProduct);
-    } else {
-      onProductAdd(newProduct);
+    const patchObject = {};
+
+    for (const key in values) {
+      if (values[key] !== initialValues[key]) {
+        if (key === 'width' || key === 'height') {
+          patchObject.size = {
+            ...product.size, // merge existing size object
+            [key]: Number(values[key]),
+          };
+        } else if (key === 'count') {
+          patchObject[key] = Number(values[key]);
+        } else {
+          patchObject[key] = values[key];
+        }
+      }
     }
+
+    // Since if there's no existing object on adding
+    // we will just build an object with values equivavent to the newProduct, duh
+    onSubmit(productId, patchObject);
+
     actions.resetForm();
-    onModalClose();
+    dispatch(closeProductModal());
   };
 
   const validationSchema = Yup.object().shape({
@@ -64,12 +83,9 @@ export default function ProductEditModal({
     height: Yup.number()
       .required('Height is required')
       .min(1, 'Height must be at least 1'),
-    weight: Yup.string()
+    weight: Yup.number()
       .required('Weight is required')
-      .matches(
-        /^(0|[1-9]\d*)(kg|g)$/,
-        'Weight must be a number, followed by "kg" or "g"'
-      ),
+      .min(1, 'Height must be at least 1'),
   });
 
   return (
@@ -113,7 +129,7 @@ export default function ProductEditModal({
               <ErrorMessage name="weight" component="span" />
             </div>
             <button type="submit">{submitButtonText}</button>
-            <button type="button" onClick={() => onModalClose()}>
+            <button type="button" onClick={() => dispatch(closeProductModal)}>
               Cancel
             </button>
           </Form>

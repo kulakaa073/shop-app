@@ -1,5 +1,4 @@
-import { nanoid } from 'nanoid';
-import css from './ProductCommentEdit.module.css';
+import css from './CommentAddModal.module.css';
 
 export default function ProductCommentEdit({
   productId,
@@ -12,11 +11,11 @@ export default function ProductCommentEdit({
     const comment = formData.get('comment');
 
     onCommentAdd({
-      id: nanoid(),
       productId: productId,
       date: new Date().toLocaleDateString(),
       description: comment,
     });
+
     event.target.reset();
     toggleCommentAdd();
   };

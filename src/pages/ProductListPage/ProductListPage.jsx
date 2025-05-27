@@ -19,10 +19,12 @@ export default function ProductListPage() {
   const sortBy = searchParams.get('sort') || '';
   const isSortAsc = searchParams.get('order') !== 'desc';
 
-  useEffect(
-    () => dispatch(fetchProducts(sortBy, isSortAsc)),
-    [dispatch, sortBy, isSortAsc]
-  );
+  //console.log('prodcut list page: ', isSortAsc);
+
+  useEffect(() => {
+    dispatch(fetchProducts({ sortBy, isSortAsc }));
+    //console.log('effect called');
+  }, [dispatch, sortBy, isSortAsc]);
 
   const handleOpenDeleteModal = useCallback(
     id => {

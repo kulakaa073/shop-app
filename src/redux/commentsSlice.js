@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit';
-import { fetchComments, addComment, deleteComment } from './productOps';
+import { fetchComments, addComment, deleteComment } from './commentsOps';
 
 const handlePending = state => {
   state.isLoading = true;

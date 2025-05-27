@@ -1,13 +1,35 @@
+//import { useDispatch } from 'react-redux';
 import { ProductComment } from './ProductComment/ProductComment';
-import ProductCommentEdit from './ProductCommentEdit/ProductCommentEdit';
+import CommentAddModal from './CommentAddModal/CommentAddModal';
 import css from './ProductCommentSection.module.css';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  fetchComments,
+  addComment,
+  deleteComment,
+} from '../../../redux/commentsOps';
 
-export const ProductCommentSection = memo(function ProductCommentSection({}) {
+export const ProductCommentSection = memo(function ProductCommentSection() {
   const [IsCommentAddOpen, setIsCommentAddOpen] = useState(false);
+  const [comments, setComments] = useState([]);
+  //const dispatch = useDispatch();
+  const productId = useParams();
 
   const toggleCommentAdd = () => {
     setIsCommentAddOpen(prevState => !prevState);
+  };
+
+  useEffect(() => {
+    setComments(fetchComments(productId));
+  }, [productId]);
+
+  const handleAddComment = comment => {
+    setComments(addComment(comment));
+  };
+
+  const handleDeleteComment = commentId => {
+    setComments(deleteComment(commentId));
   };
 
   return (
@@ -18,15 +40,15 @@ export const ProductCommentSection = memo(function ProductCommentSection({}) {
           <li key={comment.id}>
             <ProductComment
               comment={comment}
-              onCommentDelete={onCommentDelete}
+              onCommentDelete={handleDeleteComment}
             />
           </li>
         ))}
       </ul>
       {IsCommentAddOpen && (
-        <ProductCommentEdit
+        <CommentAddModal
           productId={productId}
-          onCommentAdd={onCommentAdd}
+          onCommentAdd={handleAddComment}
           toggleCommentAdd={toggleCommentAdd}
         />
       )}

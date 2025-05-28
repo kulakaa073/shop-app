@@ -12,7 +12,7 @@ import {
   selectProductModalMode,
 } from '../../redux/productModalSlice';
 
-export default function ProductEditModal({ onSubmit }) {
+export default function ProductModal({ onSubmit }) {
   const dispatch = useDispatch();
   const productId = useSelector(selectProductModalProductId) || null;
 
@@ -32,12 +32,12 @@ export default function ProductEditModal({ onSubmit }) {
   const weightFieldId = useId();
 
   const initialValues = {
-    name: product.name || '',
-    imageUrl: product.imageUrl || '',
-    count: product.count || 0,
-    width: product.size.width || 0,
-    height: product.size.height || 0,
-    weight: product.weight || 0,
+    name: product ? product.name : '',
+    imageUrl: product ? product.imageUrl : '',
+    count: product ? product.count : 0,
+    width: product ? product.size.width : 0,
+    height: product ? product.size.height : 0,
+    weight: product ? product.weight : 0,
   };
 
   const handleSubmit = (values, actions) => {
@@ -47,8 +47,11 @@ export default function ProductEditModal({ onSubmit }) {
       if (values[key] !== initialValues[key]) {
         if (key === 'width' || key === 'height') {
           patchObject.size = {
-            ...product.size, // merge existing size object
-            [key]: Number(values[key]),
+            //...product.size, // merge existing size object
+            //[key]: Number(values[key]),
+            // just copy both fields for now
+            width: values.width,
+            height: values.height,
           };
         } else if (key === 'count') {
           patchObject[key] = Number(values[key]);
@@ -57,10 +60,10 @@ export default function ProductEditModal({ onSubmit }) {
         }
       }
     }
-
+    console.log('productmodal', patchObject);
     // Since if there's no existing object on adding
     // we will just build an object with values equivavent to the newProduct, duh
-    onSubmit(productId, patchObject);
+    onSubmit(patchObject, productId || null);
 
     actions.resetForm();
     dispatch(closeProductModal());

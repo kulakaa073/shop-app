@@ -1,17 +1,18 @@
 import './App.css';
 
-import ProductEditModal from './components/ProductModal/ProductModal';
-
 //import { postData } from './utils';
 import { lazy, Suspense } from 'react';
 
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+//store moved to main.jsx because i'm using dispatch here
 //import { store } from './redux/store';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { selectProductModalMode } from './redux/productModalSlice';
 import { addProduct, editProduct } from './redux/productOps';
+import { ProductCommentSection } from './components/Product/ProductCommentSection/ProductCommentSection';
 
 const ProductListPage = lazy(() =>
   import('./pages/ProductListPage/ProductListPage')
@@ -21,9 +22,9 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 const ProductModal = lazy(() =>
   import('./components/ProductModal/ProductModal')
 );
-const ProductCommentSection = lazy(() =>
-  import('./components/Product/ProductCommentSection/ProductCommentSection')
-);
+//const ProductCommentSection = lazy(() =>
+// import('./components/Product/ProductCommentSection/ProductCommentSection')
+//);
 
 // enum
 const ActiveModal = Object.freeze({
@@ -40,11 +41,11 @@ function App() {
     dispatch(addProduct(product));
   };
 
-  const handleEditProduct = (productId, product) => {
-    dispatch(editProduct(productId, product));
+  const handleEditProduct = (product, productId) => {
+    dispatch(editProduct(product, productId));
   };
 
-  // move selecting object data to app too?
+  // move selecting object data to app from modal too?
   // or move add/edit handlers to modal?
   return (
     <BrowserRouter>

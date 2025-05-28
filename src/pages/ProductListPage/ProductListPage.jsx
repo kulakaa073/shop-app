@@ -8,6 +8,7 @@ import {
   selectProductsIsLoading,
 } from '../../redux/productsSlice';
 import { useSearchParams } from 'react-router-dom';
+import DeleteConfirmationModal from '../../components/ProductList/DeleteConfirmationModal/DeleteConfirmationModal';
 
 export default function ProductListPage() {
   const dispatch = useDispatch();

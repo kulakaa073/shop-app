@@ -12,12 +12,12 @@ export default function ProductPage() {
   const { productId } = useParams();
   const product = useSelector(selectProductById(productId));
 
-  console.log('prodcut page');
-  console.log('product id: ', productId);
+  //console.log('prodcut page');
+  //console.log('product id: ', productId);
   // if we cant find product in the store, we fetch it
   // for cases when we navigate directly to the product page
 
-  console.log('product: ', product);
+  //console.log('product: ', product);
 
   useEffect(() => {
     if (!product && productId) {

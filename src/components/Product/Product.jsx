@@ -2,8 +2,8 @@ import css from './Product.module.css';
 import { memo } from 'react';
 
 export const Product = memo(function Product({ product }) {
-  console.log('product component: ', product);
-  console.log(product.name);
+  //console.log('product component: ', product);
+  //console.log(product.name);
   return (
     <div className={css.container}>
       <div className={css.product}>

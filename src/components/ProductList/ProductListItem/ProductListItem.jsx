@@ -14,6 +14,7 @@ export const ProductListItem = memo(function ProductListItem({
   const handleDelete = () => {
     onProductDelete(data.id);
   };
+  //console.log('ProductListItem', data);
 
   return (
     <>

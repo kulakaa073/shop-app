@@ -7,10 +7,11 @@ export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async ({ sortBy, isSortAsc }, thunkAPI) => {
     const params = { sort: isSortAsc ? sortBy : '-' + sortBy };
-    //console.log('fetchproucts', params);
+    //console.log('fetchproucts params', params);
     //console.log(isSortAsc);
     try {
       const responce = await axios.get(`/products?_sort=${params.sort}`);
+      //console.log('fetchproucts responce', responce);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -33,8 +34,10 @@ export const fetchProductById = createAsyncThunk(
 export const addProduct = createAsyncThunk(
   'products/addProduct',
   async (product, thunkAPI) => {
+    //console.log('addProduct', product);
     try {
       const responce = await axios.get('/products', product);
+      //console.log('addProduct resp', responce);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -44,9 +47,10 @@ export const addProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   'products/editProduct',
-  async (product, thunkAPI) => {
+  async (product, productId, thunkAPI) => {
+    //console.log('editProduct', product, productId);
     try {
-      const responce = await axios.patch(`/products/${product.id}`, product);
+      const responce = await axios.patch(`/products/${productId}`, product);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

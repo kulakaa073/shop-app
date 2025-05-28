@@ -15,13 +15,13 @@ export const ProductCommentSection = memo(function ProductCommentSection() {
   const [comments, setComments] = useState([]);
   //const dispatch = useDispatch();
   const productId = useParams();
-
+  //console.log('comment section', comments);
   const toggleCommentAdd = () => {
     setIsCommentAddOpen(prevState => !prevState);
   };
 
   useEffect(() => {
-    setComments(fetchComments(productId));
+    fetchComments(productId).then(response => setComments(response));
   }, [productId]);
 
   const handleAddComment = comment => {

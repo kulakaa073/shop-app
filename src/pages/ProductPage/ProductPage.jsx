@@ -10,7 +10,7 @@ export default function ProductPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { productId } = useParams();
-  const product = useSelector(selectProductById(productId));
+  const product = useSelector(state => selectProductById(state, productId));
 
   //console.log('prodcut page');
   //console.log('product id: ', productId);

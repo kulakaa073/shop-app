@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import {
   fetchProducts,
   fetchProductById,
@@ -6,6 +6,7 @@ import {
   deleteProduct,
   editProduct,
 } from './productOps';
+import { addComment, deleteComment } from './commentsOps';
 
 const handlePending = state => {
   state.isLoading = true;
@@ -19,6 +20,22 @@ const handleRejected = (state, action) => {
 const slice = createSlice({
   name: 'products',
   initialState: { items: [], isLoading: false, error: null, sorting: 'none' },
+  reducers: {
+    addCommentIdToProduct(state, action) {
+      const { productId, commentId } = action.payload;
+      const product = state.items.find(p => p.id === productId);
+      if (product) {
+        product.comments.push(commentId);
+      }
+    },
+    removeCommentIdFromProduct(state, action) {
+      const { productId, commentId } = action.payload;
+      const product = state.items.find(p => p.id === productId);
+      if (product) {
+        product.comments = product.comments.filter(id => id !== commentId);
+      }
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchProducts.pending, handlePending)
@@ -72,17 +89,34 @@ const slice = createSlice({
           product => product.id !== action.payload.id
         );
       })
-      .addCase(deleteProduct.rejected, handleRejected);
+      .addCase(deleteProduct.rejected, handleRejected)
+      .addCase(addComment.fulfilled, (state, action) => {
+        // action.payload is the new comment object
+        const { productId, id: commentId } = action.payload;
+        const product = state.items.find(p => p.id === productId);
+        if (product) {
+          product.comments.push(commentId);
+        }
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        // action.payload should be the deleted comment object or at least { id, productId }
+        const { productId, id: commentId } = action.payload;
+        const product = state.items.find(p => p.id === productId);
+        if (product) {
+          product.comments = product.comments.filter(id => id !== commentId);
+        }
+      });
   },
 });
 
+export const { addCommentIdToProduct, removeCommentIdFromProduct } =
+  slice.actions;
 export default slice.reducer;
 
 export const selectProducts = state => state.products.items;
 export const selectProductsIsLoading = state => state.products.isLoading;
 export const selectProductsError = state => state.products.error;
 
-export const selectProductById = productId =>
-  createSelector([selectProducts], products =>
-    products.find(product => product.id === productId)
-  );
+export const selectProductById = (state, productId) => {
+  return selectProducts(state).find(product => product.id === productId);
+};

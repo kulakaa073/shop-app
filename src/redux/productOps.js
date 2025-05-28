@@ -36,7 +36,7 @@ export const addProduct = createAsyncThunk(
   async (product, thunkAPI) => {
     //console.log('addProduct', product);
     try {
-      const responce = await axios.get('/products', product);
+      const responce = await axios.post('/products', product);
       //console.log('addProduct resp', responce);
       return responce.data;
     } catch (error) {
@@ -47,10 +47,10 @@ export const addProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   'products/editProduct',
-  async (product, productId, thunkAPI) => {
+  async (product, thunkAPI) => {
     //console.log('editProduct', product, productId);
     try {
-      const responce = await axios.patch(`/products/${productId}`, product);
+      const responce = await axios.patch(`/products/${product.id}`, product);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -62,7 +62,7 @@ export const deleteProduct = createAsyncThunk(
   'products/deleteProduct',
   async (productId, thunkAPI) => {
     try {
-      const responce = await axios.get(`/products/${productId}`);
+      const responce = await axios.delete(`/products/${productId}`);
       return responce.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

@@ -17,7 +17,7 @@ export default function ProductModal({ onSubmit }) {
   const productId = useSelector(selectProductModalProductId) || null;
 
   // what would selector return if productId is null?
-  const product = useSelector(selectProductById(productId));
+  const product = useSelector(state => selectProductById(state, productId));
 
   // just small thing to make modal more user friendly
   const submitButtonText = (
@@ -41,30 +41,43 @@ export default function ProductModal({ onSubmit }) {
   };
 
   const handleSubmit = (values, actions) => {
-    const patchObject = {};
+    let submitObject;
 
-    for (const key in values) {
-      if (values[key] !== initialValues[key]) {
-        if (key === 'width' || key === 'height') {
-          patchObject.size = {
-            //...product.size, // merge existing size object
-            //[key]: Number(values[key]),
-            // just copy both fields for now
-            width: values.width,
-            height: values.height,
-          };
-        } else if (key === 'count') {
-          patchObject[key] = Number(values[key]);
-        } else {
-          patchObject[key] = values[key];
-        }
+    if (!productId) {
+      // ADD MODE: Build a full product object
+      submitObject = {
+        name: values.name,
+        imageUrl: values.imageUrl,
+        count: Number(values.count),
+        size: {
+          width: Number(values.width),
+          height: Number(values.height),
+        },
+        weight: Number(values.weight),
+        comments: [],
+      };
+    } else {
+      // EDIT MODE: Only include changed fields
+      submitObject = { id: productId };
+      if (values.name !== initialValues.name) submitObject.name = values.name;
+      if (values.imageUrl !== initialValues.imageUrl)
+        submitObject.imageUrl = values.imageUrl;
+      if (Number(values.count) !== initialValues.count)
+        submitObject.count = Number(values.count);
+      if (
+        Number(values.width) !== initialValues.width ||
+        Number(values.height) !== initialValues.height
+      ) {
+        submitObject.size = {
+          width: Number(values.width),
+          height: Number(values.height),
+        };
       }
+      if (Number(values.weight) !== initialValues.weight)
+        submitObject.weight = Number(values.weight);
     }
-    console.log('productmodal', patchObject);
-    // Since if there's no existing object on adding
-    // we will just build an object with values equivavent to the newProduct, duh
-    onSubmit(patchObject, productId || null);
 
+    onSubmit(submitObject);
     actions.resetForm();
     dispatch(closeProductModal());
   };
@@ -132,7 +145,7 @@ export default function ProductModal({ onSubmit }) {
               <ErrorMessage name="weight" component="span" />
             </div>
             <button type="submit">{submitButtonText}</button>
-            <button type="button" onClick={() => dispatch(closeProductModal)}>
+            <button type="button" onClick={() => dispatch(closeProductModal())}>
               Cancel
             </button>
           </Form>

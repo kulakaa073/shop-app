@@ -3,13 +3,13 @@
     {
       "id": "1",
       "imageUrl": "https://example.com/product1.jpg",
-      "name": "Product 1",
+      "name": "blah",
       "count": 10,
       "size": {
         "width": 100,
         "height": 200
       },
-      "weight": "1kg",
+      "weight": 1,
       "comments": [
         1,
         2
@@ -149,6 +149,18 @@
         19,
         20
       ]
+    },
+    {
+      "id": "466d",
+      "name": "bhal",
+      "imageUrl": "http://localhost.com/image.png",
+      "count": 2,
+      "size": {
+        "width": 4,
+        "height": 3
+      },
+      "weight": 1,
+      "comments": []
     }
   ],
   "comments": [
@@ -285,6 +297,12 @@
       "productId": {
         "productId": "1"
       },
+      "date": "5/28/2025",
+      "description": "asd"
+    },
+    {
+      "id": "40f9",
+      "productId": "1",
       "date": "5/28/2025",
       "description": "asd"
     }

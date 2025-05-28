@@ -9,27 +9,32 @@ import {
   addComment,
   deleteComment,
 } from '../../../redux/commentsOps';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCommentsByProductId } from '../../../redux/commentsSlice';
 
 export const ProductCommentSection = memo(function ProductCommentSection() {
+  const dispatch = useDispatch();
   const [IsCommentAddOpen, setIsCommentAddOpen] = useState(false);
-  const [comments, setComments] = useState([]);
-  //const dispatch = useDispatch();
-  const productId = useParams();
+  const { productId } = useParams();
+  const comments = useSelector(state =>
+    selectCommentsByProductId(state, productId)
+  );
+
   //console.log('comment section', comments);
   const toggleCommentAdd = () => {
     setIsCommentAddOpen(prevState => !prevState);
   };
 
   useEffect(() => {
-    fetchComments(productId).then(response => setComments(response));
-  }, [productId]);
+    dispatch(fetchComments(productId));
+  }, [dispatch, productId]);
 
   const handleAddComment = comment => {
-    setComments(addComment(comment));
+    dispatch(addComment(comment));
   };
 
   const handleDeleteComment = commentId => {
-    setComments(deleteComment(commentId));
+    dispatch(deleteComment(commentId));
   };
 
   return (

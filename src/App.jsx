@@ -1,12 +1,8 @@
 import './App.css';
 
-//import { postData } from './utils';
 import { lazy, Suspense } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-
-//store moved to main.jsx because i'm using dispatch here
-//import { store } from './redux/store';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -22,9 +18,6 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage/NotFoundPage'));
 const ProductModal = lazy(() =>
   import('./components/ProductModal/ProductModal')
 );
-//const ProductCommentSection = lazy(() =>
-// import('./components/Product/ProductCommentSection/ProductCommentSection')
-//);
 
 // enum
 const ActiveModal = Object.freeze({
@@ -41,8 +34,8 @@ function App() {
     dispatch(addProduct(product));
   };
 
-  const handleEditProduct = (product, productId) => {
-    dispatch(editProduct(product, productId));
+  const handleEditProduct = product => {
+    dispatch(editProduct(product));
   };
 
   // move selecting object data to app from modal too?
